@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    @System.Web.Optimization.Styles.Render("~/Content/css")
+}
+
+<h4>This is my Rewarding project.</h4>
+<p>
+    Use the menu bar above to see the list of people or rewards. <br />
+    You can modify them, add rewards to people, etc. <br />
+    <br />
+    Have a great time!
+</p>
+
+@Html.Partial("View")
+
+@section scripts {
+    <script src="~/Scripts/bootstrap.min.js"></script>
+}
+

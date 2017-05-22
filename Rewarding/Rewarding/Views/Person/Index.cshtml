@@ -1,0 +1,69 @@
+﻿@using Rewarding.Models
+@using Microsoft.AspNet.Identity
+@model IEnumerable<Rewarding.Models.Person>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Person/_LayoutPerson.cshtml";
+}
+
+@section styles{
+    @System.Web.Optimization.Styles.Render("~/Content/css")
+}
+
+@section breadcrumps{
+    You are here: @Html.MvcSiteMap().SiteMapPath()
+}
+
+@*<div id="dialog" title="Basic dialog">
+    <p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+</div>*@
+@*<button id="opener">Open Dialog</button>*@
+
+<h2>Index</h2>
+
+
+@Html.Partial("_createPartial", new Person())
+
+
+<div id="notesList">
+    @Html.Partial("_peopleListPartial")
+</div>
+
+<a onclick="refresh()" class="btn btn-default">Refresh</a>
+
+
+<p>
+    @Html.ActionLink("Dowload list of people", "DownloadListOfPeople")
+</p>
+
+@section scripts {
+    <script src="~/Scripts/bootstrap.min.js"></script>
+}
+
+<script type="text/javascript">
+    function refresh() {
+        $.ajax({
+            url: '@Url.Action("Index")',
+            method: "GET",
+            success: function (data) {
+                $('#notesList').html(data);
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    function OnNoteRemove(data, status, request) {
+        if (data.error) {
+            OnError(request, status, data.error);
+            return;
+        }
+        var noteId = data.id;
+        $('tr[data-note-id = ' + noteId + ']').remove();
+    }
+
+    function OnError(request, status, error) {
+        alert(error);
+    }
+</script>

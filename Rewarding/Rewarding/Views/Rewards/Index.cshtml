@@ -1,0 +1,47 @@
+﻿
+@using Rewarding.Models
+@using Microsoft.AspNet.Identity
+@model IEnumerable<Rewarding.Models.Reward>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Rewards/_LayoutRewards.cshtml";
+}
+
+<h2>Index</h2>
+
+@Html.Partial("_createPartial", new Reward())
+
+<div id="notesList">
+    @Html.Partial("_rewardsListPartial")
+</div>
+<a onclick="refresh()" class="btn btn-default">Refresh</a>
+
+<script type="text/javascript">
+    function refresh() {
+        $.ajax({
+            url: '@Url.Action("Index")',
+            method: "GET",
+            success: function (data) {
+                $('#notesList').html(data);
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    function OnNoteRemove(data, status, request) {
+        if (data.error) {
+            OnError(request, status, data.error);
+            return;
+        }
+        var noteId = data.id;
+        $('tr[data-note-id = ' + noteId + ']').remove();
+    }
+
+    function OnError(request, status, error) {
+        alert(error);
+    }
+</script>
+
+

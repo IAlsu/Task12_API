@@ -1,0 +1,54 @@
+﻿@model Rewarding.Models.TempChangesVM
+@using Rewarding.Models
+@{
+    ViewBag.Title = "Your changes";
+}
+
+<h2>Your changes</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Entity</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in Model.TempChange.Lines)
+        {
+            <tr>
+                @{
+                    string ent = "";
+                    if (line.Entity.GetType().Name.Contains("Reward"))
+                    {
+                        Reward entity = (Reward)(line.Entity);
+
+                        ent = entity.Title + Environment.NewLine
+                             + "\t" + (entity.Description ?? " ").Substring(0, Math.Min(1, 30)) + "...";
+                    }
+                    else
+                    {
+                        Person entity = (Person)(line.Entity);
+                        ent = entity.Name + Environment.NewLine
+                             + "\t" + (entity.Age.ToString() ?? " ").Substring(0, Math.Min(1, 30)) + "...";
+                    }
+                    <td class="text-center">
+                        @ent
+                    </td>
+                }
+                <td class="text-center">
+                </td>
+                <td class="text-left">@line.Method</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@using (Html.BeginForm("ApplyChanges", "TempChanges"))
+{
+    <input class="btn btn-sm btn-warning" type="submit" value="Apply Changes" >
+}
+
+@using (Html.BeginForm("DoNotApplyChanges", "TempChanges"))
+{
+    <input class="btn btn-sm btn-warning" type="submit" value="Don't apply   " />
+}

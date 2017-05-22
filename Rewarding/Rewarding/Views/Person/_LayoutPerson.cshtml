@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    @RenderSection("styles", false)
+}
+
+<h1 style="color:#ff0000">Место для рекламы </h1>
+
+@section breadcrumps{
+    @RenderSection("breadcrumps", false)
+}
+
+@RenderBody()
+
+@section scripts{
+    @RenderSection("scripts", false)
+}

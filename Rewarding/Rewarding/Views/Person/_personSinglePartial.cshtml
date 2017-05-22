@@ -1,0 +1,80 @@
+﻿@model Rewarding.Models.Person
+
+<tr  data-note-id="@Model.Id">
+    <td>
+        @Html.DisplayFor(modelModel => Model.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(modelModel => Model.Birthdate)
+    </td>
+    <td>
+        @Html.DisplayFor(modelModel => Model.Age)
+    </td>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <td>
+            @{
+                foreach (var reward in Model.Rewards)
+                {
+                    <img class="img-thumbnail" width="50" height="50"
+                         src="@Url.Action("GetImage", "Images", new { imageId = reward.ImageId })" id=@reward.ImageId title=@reward.Title />
+                                <br />
+
+
+                                <script>
+                        $(function () {
+                            var createDialog = function (selector) {
+                                $(selector).dialog({
+                                    autoOpen: false,
+                                    show: {
+                                        effect: "blind",
+                                        duration: 1000
+                                    },
+                                    hide: {
+                                        effect: "explode",
+                                        duration: 1000
+                                    }
+                                });
+                            };
+
+                            createDialog("#@("dialog" + reward.ImageId)");
+
+                            $("#@reward.ImageId").on("click", function () {
+                                $("#@("dialog" + reward.ImageId)").dialog("open");
+                            });
+                        });
+                                </script>
+
+                                <div id=@("dialog" + reward.ImageId) title="Basic dialog">
+                                    <p>@reward.Description</p>
+                                </div>
+                }
+            }
+        </td>
+    }
+
+    <td>
+        @if (Model.PhotoId == null)
+        {
+            <div class="form-control-static">No photo</div>
+        }
+        else
+        {
+            <img class="img-thumbnail" width="150" height="150"
+                 src="@Url.Action("GetImage", "Images",
+                        new {imageId = Model.PhotoId })" />
+        }
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Details", "Details", new { id = Model.Id }) |
+        @*@Html.ActionLink("Delete", "Delete", new { id = Model.Id })*@
+        @using (Ajax.BeginForm("Delete", new { }, new AjaxOptions() { Confirm = "Удалить?", HttpMethod = "POST", OnSuccess = "OnNoteRemove", OnFailure = "OnError" }, new { style = "display: inline-block" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("Id", Model.Id)
+            <input type="submit" value="Delete" class="btn btn-danger" />}
+    </td>
+</tr>
+

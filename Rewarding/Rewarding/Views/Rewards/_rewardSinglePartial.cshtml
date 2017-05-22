@@ -1,0 +1,36 @@
+﻿@model Rewarding.Models.Reward
+
+<tr  data-note-id="@Model.Id">
+    <td>
+        @Html.DisplayFor(modelModel => Model.Title)
+    </td>
+    <td>
+        @Html.DisplayFor(modelModel => Model.Description)
+    </td>
+    <td>
+        @if (Model.ImageId == null)
+        {
+            <div class="form-control-static">No image</div>
+        }
+        else
+        {
+            <img class="img-thumbnail" width="150" height="150"
+                 src="@Url.Action("GetImage", "Images",
+                            new {imageId = Model.ImageId })" />
+        }
+    </td>
+
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Details", "Details", new { id = Model.Id }) |
+        @*@Html.ActionLink("Delete", "Delete", new { id = Model.Id })*@
+        @using (Ajax.BeginForm("Delete", new { }, new AjaxOptions() { Confirm = "Удалить?", HttpMethod = "POST", OnSuccess = "OnNoteRemove", OnFailure = "OnError" }, new { style = "display: inline-block" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("Id", Model.Id)
+            <input type="submit" value="Delete" class="btn btn-danger" />}
+    </td>
+</tr>
+
+
+

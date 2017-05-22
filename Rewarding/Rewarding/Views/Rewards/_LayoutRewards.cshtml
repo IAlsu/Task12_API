@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    @System.Web.Optimization.Styles.Render("~/Content/css")
+}
+
+<h1 style="color:#00ff00">Место для рекламы </h1>
+
+@section breadcrumps{
+    You are here: @Html.MvcSiteMap().SiteMapPath()
+}
+
+@RenderBody()
+
+@section scripts {
+    <script src="~/Scripts/bootstrap.min.js"></script>
+}

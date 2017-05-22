@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Rewarding.Models.Reward>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="rewardsListBody">
+        @foreach (var item in Model)
+        {
+            {
+                Html.RenderPartial("_rewardSinglePartial", item);
+            }
+        }
+     </tbody>
+
+</table>
