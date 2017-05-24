@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Index</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <h2>All products</h2>
+        <ul id="products"></ul>
+    </div>
+    <div>
+        <h2>Search by Id</h2>
+        <input type="text" id="productId" size="5" />
+        <button id="searchProduct">Search</button>
+        <p id="product"></p>
+    </div>
+    <div>
+        <h2>Add product</h2>
+        <input type="text" id="productName" size="15" />
+        <input type="text" id="productCategory" size="15" />
+        <input type="text" id="productPrice" size="15" />
+        <button id="addProduct">Add</button>
+        <p id="product"></p>
+    </div>
+    <script src="Scripts/jquery-3.1.1.min.js"></script>
+    <script>
+        var uri = 'api/product',
+            $product = $('#product'),
+            $products = $('#products'),
+            $productId = $('#productId'),
+            $productName = $('#productName'),
+            $productCategory = $('#productCategory'),
+            $productPrice = $('#productPrice'),
+            $addProduct = $('#addProduct'),
+            $searchProduct = $('#searchProduct');
+
+        $(function () {
+            reloadData();
+        });
+
+        function reloadData() {
+            $.getJSON(uri)
+                .done(function (data) {
+                    $products.empty();
+                    $.each(data, function (key, item) {
+                    $('<li>', { text: formatItem(item) }).appendTo($products)
+                });
+            });
+        };
+
+        function formatItem(item) {
+            return item.Name + ': ' + item.Price + ' ₸';
+        };
+
+        $searchProduct.click(function () {
+            var id = $productId.val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $product.text(formatItem(data));
+                })
+            .fail(function (jqXHR, textStatus, err) {
+                $product.text('Error: ' + err);
+            });
+        });
+
+        $addProduct.click(function () {
+            var newProduct = {
+                name: $productName.val(),
+                category: $productCategory.val(),
+                price: $productPrice.val()
+            };
+            $.ajax({
+                data: newProduct,
+                type: 'post',
+                url: uri,
+                success: function (data){
+                    reloadData();
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>
+
