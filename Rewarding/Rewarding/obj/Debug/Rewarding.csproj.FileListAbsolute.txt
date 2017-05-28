@@ -568,7 +568,6 @@ D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\System
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\System.Web.Webpages.Razor.xml
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\System.Web.Helpers.xml
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\System.Web.Mvc.xml
-D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\obj\Debug\Rewarding.csprojResolveAssemblyReference.cache
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\obj\Debug\Rewarding.Migrations.Create.resources
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\obj\Debug\Rewarding.Migrations.Addroles.resources
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\obj\Debug\Rewarding.csproj.GenerateResource.Cache

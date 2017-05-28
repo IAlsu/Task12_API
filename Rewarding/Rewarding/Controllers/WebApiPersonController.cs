@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Mvc;
+//using System.Web.Mvc;
 
 using System.Web.Http.OData;
 using System.Data.Entity.Core.Objects;
@@ -16,26 +16,31 @@ namespace Rewarding.Controllers
     public class WebApiPersonController : ApiController
     {
         PersonContext db = new PersonContext();
-
+        
         [EnableQuery]
-        public IQueryable<Person> GetByPieceOfName(string pieceOfName)
+        [Route("api/users/{pieceOfName?}")]
+        public IQueryable<Person> GetByPieceOfName(string pieceOfName=null)
         {
-            IQueryable<Person> persons;
-            if (pieceOfName.Length == 1)
-            {
-                persons = db.Persons
-                        .Where(x => x.Name.StartsWith(pieceOfName)).Select(y => y);
-            }
-            else
-            {
-                persons = db.Persons
-                        .Where(x => x.Name.StartsWith(pieceOfName) || x.Name.EndsWith(pieceOfName)).Select(y => y); //distinct
-            }
+            var persons = db.Persons.ToList();
 
-            return new EnumerableQuery<Person>(persons);
+            if (pieceOfName != null)
+            {
+                if (pieceOfName.Length == 1)
+                {
+                    persons = persons
+                            .Where(x => x.Name.StartsWith(pieceOfName)).Select(y => y).ToList();
+                }
+                else
+                {
+                    persons = persons
+                            .Where(x => x.Name.StartsWith(pieceOfName) || x.Name.EndsWith(pieceOfName)).Select(y => y).ToList(); //distinct
+                }
+            }
+            IEnumerable<Person> per = persons.ToList();
+            return new EnumerableQuery<Person>(per);
         }
 
-
+        [Route("api/user/{name}")]
         public IHttpActionResult GetByName(string name)
         {
             var person = db.Persons.Where(x => x.Name == name).OrderBy(y => y.Birthdate).FirstOrDefault(); 
@@ -44,7 +49,7 @@ namespace Rewarding.Controllers
             return Ok(person);
         }
 
-
+        [Route("api/user/{id:int}")]
         public IHttpActionResult GetById(int id)
         {
             var person = db.Persons.Find(id);
@@ -52,17 +57,17 @@ namespace Rewarding.Controllers
                 return NotFound();
             return Ok(person);
         }
-
+        [Route("api/user")]
         public HttpResponseMessage Post(Person person)
         {
             db.Persons.Add(person);
             db.SaveChanges();
             var response = Request.CreateResponse<Person>(HttpStatusCode.Created, person);
-            var uri = Url.Link("DefaultApi", new { Id = person.Id });
+            var uri = Url.Link("DefaultApiPerson", new { Id = person.Id });
             response.Headers.Location = new Uri(uri);
             return response;
         }
-
+        [Route("api/user/{id:int}")]
         public IHttpActionResult Put(int id, Person person)
         {
             person.Id = id;
@@ -76,6 +81,7 @@ namespace Rewarding.Controllers
             storedPerson.Birthdate = person.Birthdate;
             return Ok(); 
         }
+        [Route("api/user/{id:int}")]
         public void Delete(int id)
         {
             Person person = db.Persons.SingleOrDefault(s => s.Id == id);
@@ -89,6 +95,7 @@ namespace Rewarding.Controllers
             db.SaveChanges();
         }
 
+        [Route ("api/user/{personId:int}/award/{rewardId:int}",Name = "AwardToPerson" )]
         public IHttpActionResult Post(int personId, int rewardId)
         {
             var person = db.Persons.Find(personId);
@@ -101,12 +108,7 @@ namespace Rewarding.Controllers
 
             person.Rewards.Add(reward);
             db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = personId }, reward);
-            //var response = Request.CreateResponse<Person>(HttpStatusCode.Created, person);
-            //var uri = Url.Link("DefaultApi", new { Id = person.Id });
-            //response.Headers.Location = new Uri(uri);
-            //return response;
+            return Ok();
         }
 
     }

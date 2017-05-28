@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Rewarding.Models;
 using System.Web.Http.OData;
+using System.Collections;
 
 namespace Rewarding.Controllers
 {
@@ -17,32 +18,31 @@ namespace Rewarding.Controllers
     {
         private PersonContext db = new PersonContext();
 
-        // GET: api/WebApiRewards
         [EnableQuery]
-        public IQueryable<Reward> GetRewards()
+        [Route("api/awards/{pieceOfName?}")]
+        public IQueryable<Reward> GetByPieceOfName(string pieceOfName=null)
+        //public IEnumerable<Reward> Get(string pieceOfName=null)
         {
-            return db.Rewards;
+            IQueryable<Reward> rewards = db.Rewards;
+
+           if (pieceOfName!=null)
+            {
+                if (pieceOfName.Length == 1)
+                {
+                    rewards = rewards
+                            .Where(x => x.Title.StartsWith(pieceOfName)).Select(y => y);
+                }
+                else
+                {
+                    rewards = rewards
+                            .Where(x => pieceOfName != null ? x.Title.Contains(pieceOfName) : true).Select(y => y);
+                }
+            }
+            IEnumerable<Reward> rew = rewards.ToList();
+            return new EnumerableQuery<Reward>(rew);
         }
 
-        [EnableQuery]
-        public IQueryable<Reward> GetByPieceOfName(string pieceOfName)
-        {
-            IQueryable<Reward> rewards;
-            if (pieceOfName.Length == 1)
-            {
-                rewards = db.Rewards
-                        .Where(x => x.Title.StartsWith(pieceOfName)).Select(y => y);
-            }
-            else
-            {
-                rewards = db.Rewards
-                       .Where(x => pieceOfName != null ? x.Title.Contains(pieceOfName) : true).Select(y => y);
-            }
-
-            return new EnumerableQuery<Reward>(rewards);
-        }
-
-
+        [Route("api/award/{title}")]
         public IHttpActionResult GetByTitle(string title)
         {
             var reward = db.Rewards.Where(x => x.Title == title).FirstOrDefault();
@@ -50,9 +50,9 @@ namespace Rewarding.Controllers
                 return NotFound();
             return Ok(reward);
         }
-        
 
-        // GET: api/WebApiRewards/5
+        // GET: api/award/5
+        [Route("api/award/{id:int}")]
         [ResponseType(typeof(Reward))]
         public IHttpActionResult GetRewardByID(int id)
         {
@@ -65,71 +65,58 @@ namespace Rewarding.Controllers
             return Ok(reward);
         }
 
-        // POST: api/WebApiRewards
-        [ResponseType(typeof(Reward))]
-        public IHttpActionResult PostReward(Reward reward)
+        // POST: api/award
+        [Route("api/award")]
+        public HttpResponseMessage Post(Reward reward)
+        {
+            db.Rewards.Add(reward);
+            db.SaveChanges();
+
+            var response = Request.CreateResponse<Reward>(HttpStatusCode.Created, reward);
+            var uri = Url.Link("DefaultApiReward", new { Id = reward.Id });
+            response.Headers.Location = new Uri(uri);
+            return response;
+        }
+
+        // PUT: api/award/5
+        [Route("api/award/{id:int}")]
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutReward(int id, Reward reward)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Rewards.Add(reward);
-            db.SaveChanges();
+            if (id != reward.Id)
+            {
+                return BadRequest();
+            }
 
-            return CreatedAtRoute("DefaultApi", new { id = reward.Id }, reward);
+            db.Entry(reward).State = EntityState.Modified;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (db.Rewards.Find(id)==null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        //// PUT: api/WebApiRewards/5
-        //[ResponseType(typeof(void))]
-        //public IHttpActionResult PutReward(int id, Reward reward)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
 
-        //    if (id != reward.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    db.Entry(reward).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        db.SaveChanges();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!RewardExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        public IHttpActionResult Put(int id, Reward reward)
-        {
-            reward.Id = id;
-            if (reward == null)
-                throw new ArgumentNullException();
-            var storedReward = db.Rewards.FirstOrDefault(p => p.Id == reward.Id);
-            if (storedReward == null)
-                return NotFound();
-            storedReward.Title = reward.Title;
-            storedReward.Description = reward.Description;
-
-            return Ok();
-        }
-
-        // DELETE: api/WebApiRewards/5
+        // DELETE: api/award/5
+        [Route("api/award/{id:int}")]
         [ResponseType(typeof(Reward))]
         public IHttpActionResult DeleteReward(int id)
         {
@@ -144,8 +131,5 @@ namespace Rewarding.Controllers
 
             return Ok(reward);
         }
-
-
-
     }
 }

@@ -6,80 +6,150 @@
 </head>
 <body>
     <div>
-        <h2>All products</h2>
-        <ul id="products"></ul>
+        <h2>All rewards</h2>
+        <ul id="rewards"></ul>
     </div>
     <div>
         <h2>Search by Id</h2>
-        <input type="text" id="productId" size="5" />
-        <button id="searchProduct">Search</button>
-        <p id="product"></p>
+        <input type="text" id="rewardId" size="5" />
+        <button id="searchreward">Search</button>
+        <p id="reward"></p>
     </div>
     <div>
-        <h2>Add product</h2>
-        <input type="text" id="productName" size="15" />
-        <input type="text" id="productCategory" size="15" />
-        <input type="text" id="productPrice" size="15" />
-        <button id="addProduct">Add</button>
-        <p id="product"></p>
+        <h2>Add reward</h2>
+        <input type="text" id="rewardTitle" size="15" />
+        <input type="text" id="rewardDescription" size="15" />
+        <button id="addreward">Add</button>
+        <p id="reward"></p>
     </div>
-    <script src="Scripts/jquery-3.1.1.min.js"></script>
+
+    <hr />
+    <div>
+        <h2>All People</h2>
+        <ul id="persons"></ul>
+    </div>
+    <div>
+        <h2>Search by Id</h2>
+        <input type="text" id="personId" size="5" />
+        <button id="searchperson">Search</button>
+        <p id="person"></p>
+    </div>
+    <div>
+        <h2>Add person</h2>
+        <input type="text" id="personName" size="15" />
+        <input type="text" id="personAge" size="15" />
+        <input type="text" id="personBirthdate" size="15" />
+        <button id="addperson">Add</button>
+        <p id="person"></p>
+    </div>
+
+    <script src="Scripts/jquery-1.10.2.min.js"></script>
     <script>
-        var uri = 'api/product',
-            $product = $('#product'),
-            $products = $('#products'),
-            $productId = $('#productId'),
-            $productName = $('#productName'),
-            $productCategory = $('#productCategory'),
-            $productPrice = $('#productPrice'),
-            $addProduct = $('#addProduct'),
-            $searchProduct = $('#searchProduct');
+        var uriReward = 'api/award',
+            $reward = $('#reward'),
+            $rewards = $('#rewards'),
+            $rewardId = $('#rewardId'),
+            $rewardTitle = $('#rewardTitle'),
+            $rewardDescription = $('#rewardDescription'),
+            $addreward = $('#addreward'),
+            $searchreward = $('#searchreward'),
+
+            uriPerson = 'api/user',
+            $person = $('#person'),
+            $persons = $('#persons'),
+            $personId = $('#personId'),
+            $personName = $('#personName'),
+            $personAge = $('#personAge'),
+            $personBirthdate = $('#personBirthdate'),
+            $addperson = $('#addperson'),
+            $searchperson= $('#searchperson');
 
         $(function () {
-            reloadData();
+            reloadDataReward();
+            reloadDataPerson();
         });
 
-        function reloadData() {
-            $.getJSON(uri)
+        function reloadDataReward() {
+            $.getJSON(uriReward+'s')
                 .done(function (data) {
-                    $products.empty();
+                    $rewards.empty();
                     $.each(data, function (key, item) {
-                    $('<li>', { text: formatItem(item) }).appendTo($products)
+                    $('<li>', { text: formatItemReward(item) }).appendTo($rewards)
                 });
-            });
+                });
         };
 
-        function formatItem(item) {
-            return item.Name + ': ' + item.Price + ' ₸';
-        };
-
-        $searchProduct.click(function () {
-            var id = $productId.val();
-            $.getJSON(uri + '/' + id)
+        function reloadDataPerson() {
+            $.getJSON(uriPerson + 's')
                 .done(function (data) {
-                    $product.text(formatItem(data));
+                    $persons.empty();
+                    $.each(data, function (key, item) {
+                        $('<li>', { text: formatItemPerson(item) }).appendTo($persons)
+                    });
+                });
+        };
+
+        function formatItemReward(item) {
+            return item.Title + ': ' + item.Description;
+        };
+
+        function formatItemPerson(item) {
+            return item.Name + ': ' + item.Age + '('+item.Birthdate+')';
+        };
+
+        $searchreward.click(function () {
+            var id = $rewardId.val();
+            $.getJSON(uriReward+'/' + id)
+                .done(function (data) {
+                    $reward.text(formatItemReward(data));
                 })
             .fail(function (jqXHR, textStatus, err) {
-                $product.text('Error: ' + err);
+                $reward.text('Error: ' + err);
             });
         });
 
-        $addProduct.click(function () {
-            var newProduct = {
-                name: $productName.val(),
-                category: $productCategory.val(),
-                price: $productPrice.val()
+        $searchperson.click(function () {
+            var id = $personId.val();
+            $.getJSON(uriPerson + '/' + id)
+                .done(function (data) {
+                    $person.text(formatItemPerson(data));
+                })
+            .fail(function (jqXHR, textStatus, err) {
+                $person.text('Error: ' + err);
+            });
+        });
+
+        $addreward.click(function () {
+            var newreward = {
+                Title: $rewardTitle.val(),
+                Description: $rewardDescription.val(),
             };
             $.ajax({
-                data: newProduct,
+                data: newreward,
                 type: 'post',
-                url: uri,
+                url: uriReward,
                 success: function (data){
-                    reloadData();
+                    reloadDataReward();
                 }
             });
-
         });
+
+        $addperson.click(function () {
+            var newperson = {
+                Name: $personName.val(),
+                Age: $personAge.val(),
+                Birthdate: $personBirthdate.val(),
+            };
+            $.ajax({
+                data: newperson,
+                type: 'post',
+                url: uriPerson,
+                success: function (data) {
+                    reloadDataPerson();
+                }
+            });
+        });
+
     </script>
 </body>
 </html>
