@@ -43,6 +43,15 @@
         <p id="person"></p>
     </div>
 
+    <hr />
+
+    <div>
+        <h2>Award person</h2>
+        <select id="personsList"></select>
+        <select id="rewardsList"></select>
+        <button id="awardPerson">Add</button>
+    </div>
+
     <script src="Scripts/jquery-1.10.2.min.js"></script>
     <script>
         var uriReward = 'api/award',
@@ -50,6 +59,7 @@
             $rewards = $('#rewards'),
             $rewardId = $('#rewardId'),
             $rewardTitle = $('#rewardTitle'),
+            $rewardsList = $('#rewardsList'),
             $rewardDescription = $('#rewardDescription'),
             $addreward = $('#addreward'),
             $searchreward = $('#searchreward'),
@@ -61,8 +71,12 @@
             $personName = $('#personName'),
             $personAge = $('#personAge'),
             $personBirthdate = $('#personBirthdate'),
+            $personRewards = $('#personRewards'),
+            $personsList = $('#personsList'),
             $addperson = $('#addperson'),
-            $searchperson= $('#searchperson');
+            $searchperson = $('#searchperson');
+
+            $awardPerson = $('#awardPerson');
 
         $(function () {
             reloadDataReward();
@@ -73,8 +87,10 @@
             $.getJSON(uriReward+'s')
                 .done(function (data) {
                     $rewards.empty();
+                    $rewardsList.empty();
                     $.each(data, function (key, item) {
-                    $('<li>', { text: formatItemReward(item) }).appendTo($rewards)
+                        $('<li>', { text: formatItemReward(item) }).appendTo($rewards);
+                        $rewardsList.append("<option value='" + item.Id + "'>"+item.Title+"</option>");
                 });
                 });
         };
@@ -83,8 +99,10 @@
             $.getJSON(uriPerson + 's')
                 .done(function (data) {
                     $persons.empty();
+                    $personsList.empty();
                     $.each(data, function (key, item) {
-                        $('<li>', { text: formatItemPerson(item) }).appendTo($persons)
+                        $('<li>', { text: formatItemPerson(item) }).appendTo($persons);
+                        $personsList.append("<option value='" + item.Id+ "'>"+item.Name+"</option>");
                     });
                 });
         };
@@ -150,7 +168,23 @@
             });
         });
 
+        $awardPerson.click(function () {
+            //debugger;
+            var IDs = {
+                personId: $('#personsList :selected').val(),
+                rewardId : $('#rewardsList :selected').val(),
+            };
+
+            $.ajax({
+                data: IDs,
+                type: 'post',
+                url: uriPerson+'/'+IDs.personId+'/award/'+IDs.rewardId,
+                success: function (data) {
+                    reloadDataPerson();
+                }
+            });
+        });
+
     </script>
 </body>
 </html>
-

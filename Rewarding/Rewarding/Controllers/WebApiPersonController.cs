@@ -16,10 +16,10 @@ namespace Rewarding.Controllers
     public class WebApiPersonController : ApiController
     {
         PersonContext db = new PersonContext();
-        
+
         [EnableQuery]
         [Route("api/users/{pieceOfName?}")]
-        public IQueryable<Person> GetByPieceOfName(string pieceOfName=null)
+        public IQueryable<Person> GetByPieceOfName(string pieceOfName = null)
         {
             var persons = db.Persons.ToList();
 
@@ -43,7 +43,7 @@ namespace Rewarding.Controllers
         [Route("api/user/{name}")]
         public IHttpActionResult GetByName(string name)
         {
-            var person = db.Persons.Where(x => x.Name == name).OrderBy(y => y.Birthdate).FirstOrDefault(); 
+            var person = db.Persons.Where(x => x.Name == name).OrderBy(y => y.Birthdate).FirstOrDefault();
             if (person == null)
                 return NotFound();
             return Ok(person);
@@ -79,7 +79,7 @@ namespace Rewarding.Controllers
             storedPerson.Name = person.Name;
             storedPerson.Age = person.Age;
             storedPerson.Birthdate = person.Birthdate;
-            return Ok(); 
+            return Ok();
         }
         [Route("api/user/{id:int}")]
         public void Delete(int id)
@@ -95,12 +95,12 @@ namespace Rewarding.Controllers
             db.SaveChanges();
         }
 
-        [Route ("api/user/{personId:int}/award/{rewardId:int}",Name = "AwardToPerson" )]
+        [Route("api/user/{personId:int}/award/{rewardId:int}", Name = "AwardToPerson")]
         public IHttpActionResult Post(int personId, int rewardId)
         {
             var person = db.Persons.Find(personId);
             var reward = db.Rewards.Find(rewardId);
-            if (person==null || reward==null)
+            if (person == null || reward == null)
                 return NotFound();
 
             if (person.Rewards.Contains(reward))

@@ -608,3 +608,4 @@ D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\ko\Sys
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\ru\System.Spatial.resources.dll
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\zh-Hans\System.Spatial.resources.dll
 D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\bin\zh-Hant\System.Spatial.resources.dll
+D:\MENTORING\MVC_tasks\DONE\Task 12 API\Rewarding\Rewarding\Rewarding\obj\Debug\Rewarding.csprojResolveAssemblyReference.cache
